@@ -307,7 +307,15 @@ export class Html5Qrcode {
         this.foreverScanTimeout;
         this.localMediaStream;
         this.shouldScan = true;
-        this.stateManagerProxy = StateManagerFactory.create();
+
+        const onStateChange = () => {
+            this.element?.dispatchEvent(
+		        new CustomEvent<Html5QrcodeScannerState>('html5-qrcode-state', {
+			        detail: this.stateManagerProxy.getState()
+		        })
+	        );
+        };
+        this.stateManagerProxy = StateManagerFactory.create(onStateChange);
     }
 
     //#region start()
@@ -732,6 +740,7 @@ export class Html5Qrcode {
      * @returns a Promise with list of {@code CameraDevice}.
      */
     public static getCameras(): Promise<Array<CameraDevice>> {
+	// @ts-ignore
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             return Html5Qrcode.getCamerasFromMediaDevices();
         }

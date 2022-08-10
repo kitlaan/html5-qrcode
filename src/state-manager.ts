@@ -18,6 +18,12 @@ export enum Html5QrcodeScannerState {
     PAUSED,
 }
 
+/**
+ * Type for a callback for state changes.
+ */
+ export type StateManagerStateChangeCallback
+ = () => void;
+
 /** Transaction for state transition. */
 export interface StateManagerTransaction {
     /**
@@ -69,14 +75,20 @@ export interface StateManager {
 class StateManagerImpl implements StateManager, StateManagerTransaction {
 
     private state: Html5QrcodeScannerState = Html5QrcodeScannerState.NOT_STARTED;
+    private stateChangeCallback: StateManagerStateChangeCallback;
 
     private onGoingTransactionNewState: Html5QrcodeScannerState
         = Html5QrcodeScannerState.UNKNOWN;
+
+    constructor(stateChangeCallback: StateManagerStateChangeCallback) {
+        this.stateChangeCallback = stateChangeCallback;
+    }
 
     public directTransition(newState: Html5QrcodeScannerState) {
         this.failIfTransitionOngoing();
         this.validateTransition(newState);
         this.state = newState;
+        this.stateChangeCallback();
     }
 
     public startTransition(newState: Html5QrcodeScannerState): StateManagerTransaction {
@@ -187,7 +199,13 @@ export class StateManagerProxy {
  * Factory for creating instance of {@class StateManagerProxy}.
  */
  export class StateManagerFactory {
-    public static create(): StateManagerProxy {
-        return new StateManagerProxy(new StateManagerImpl());
+    public static create(
+        stateChangeCallback: StateManagerStateChangeCallback | undefined,
+    ): StateManagerProxy {
+        if (!stateChangeCallback) {
+            stateChangeCallback = () => {};
+        }
+
+        return new StateManagerProxy(new StateManagerImpl(stateChangeCallback));
     }
 }
