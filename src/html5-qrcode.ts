@@ -336,7 +336,15 @@ export class Html5Qrcode {
 
         this.foreverScanTimeout;
         this.shouldScan = true;
-        this.stateManagerProxy = StateManagerFactory.create();
+
+        const onStateChange = () => {
+            this.element?.dispatchEvent(
+                new CustomEvent<Html5QrcodeScannerState>('html5-qrcode-state', {
+                    detail: this.stateManagerProxy.getState()
+                })
+            );
+        };
+        this.stateManagerProxy = StateManagerFactory.create(onStateChange);
     }
 
     //#region start()
