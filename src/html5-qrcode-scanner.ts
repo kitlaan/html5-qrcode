@@ -773,7 +773,7 @@ export class Html5QrcodeScanner {
                     if(this.scanTypeSelector.hasMoreThanOneScanType()) {
                         $this.showHideScanTypeSwapLink(true);
                     }
-                    
+
                     cameraSelectionSelect.disabled = false;
                     cameraActionStartButton.disabled = false;
                     cameraActionStopButton.style.display = "none";
@@ -835,7 +835,7 @@ export class Html5QrcodeScanner {
             $this.resetHeaderMessage();
             $this.getFileScanInput().value = "";
             $this.sectionSwapAllowed = false;
-            
+
             if (ScanTypeSelector.isCameraScanType($this.currentScanType)) {
                 // Swap to file based scanning.
                 $this.clearScanRegion();
