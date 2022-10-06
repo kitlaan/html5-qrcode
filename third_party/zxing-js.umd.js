@@ -5070,7 +5070,7 @@
          * @return nearest {@code int}
          */
         static round(d /*float*/) {
-            if (NaN === d)
+            if (isNaN(d))
                 return 0;
             if (d <= Number.MIN_SAFE_INTEGER)
                 return Number.MIN_SAFE_INTEGER;
